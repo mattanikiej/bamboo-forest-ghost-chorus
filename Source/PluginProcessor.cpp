@@ -19,12 +19,38 @@ BambooForestAudioProcessor::BambooForestAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+
+        _parameters (*this, nullptr, juce::Identifier ("BambooForest"),
+                      {
+                        // DELAY PARAMS
+                        std::make_unique<juce::AudioParameterFloat> ("wet",             // parameterID
+                                                                     "Wet",             // parameter name
+                                                                     0.0f,              // minimum value
+                                                                     1.0f,              // maximum value
+                                                                     0.75f),            // default value
+            
+                        std::make_unique<juce::AudioParameterFloat> ("feedback",        // parameterID
+                                                                     "Feedback",        // parameter name
+                                                                     0.0f,              // minimum value
+                                                                     1.0f,              // maximum value
+                                                                     0.5f),             // default value
+            
+                        std::make_unique<juce::AudioParameterFloat> ("delayTime",       // parameterID
+                                                                     "Delay Time",      // parameter name
+                                                                     0.0f,              // minimum value
+                                                                     10.0f,             // maximum value
+                                                                     0.7f),             // default value
+                      })
 #endif
+        
 {
 
     _delayLine.setMaximumDelayInSamples(44100);
-    _delayLine.setDelay(0.7f);
+    
+    _wetParameter = _parameters.getRawParameterValue("wet");
+    _feedbackParameter = _parameters.getRawParameterValue("feedback");
+    _delayTimeParameter = _parameters.getRawParameterValue("delayTime");
 }
 
 BambooForestAudioProcessor::~BambooForestAudioProcessor()
@@ -101,7 +127,7 @@ void BambooForestAudioProcessor::prepareToPlay (double sampleRate, int samplesPe
     juce::dsp::ProcessSpec spec;
     spec.sampleRate = sampleRate;
     spec.maximumBlockSize = samplesPerBlock;
-    spec.numChannels = getNumInputChannels();
+    spec.numChannels = getTotalNumInputChannels();
 
     _delayLine.reset();
     _delayLine.prepare(spec);
@@ -172,7 +198,10 @@ void BambooForestAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     {
         auto* channelData = buffer.getWritePointer (channel);
 
-        auto delayTime = _delayLine.getDelay();
+        float wet = *_wetParameter;
+        float feedback = *_feedbackParameter;
+        float delayTime = *_delayTimeParameter;
+        
         auto& filter = _filters[channel];
 
         for (size_t sample = 0; sample < buffer.getNumSamples(); ++sample)
@@ -180,11 +209,11 @@ void BambooForestAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
             auto delayedSample = filter.processSample(_delayLine.popSample(channel, delayTime));                              
             auto inputSample = channelData[sample];                        
 
-            auto dlineInputSample = std::tanh(inputSample + _feedback * delayedSample);
+            auto dlineInputSample = std::tanh(inputSample + feedback * delayedSample);
 
             _delayLine.pushSample(channel, dlineInputSample);
 
-            auto outputSample = inputSample + _wet * delayedSample;           
+            auto outputSample = inputSample + wet * delayedSample;
 
             channelData[sample] = outputSample;                                                   
         }
@@ -200,7 +229,7 @@ bool BambooForestAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* BambooForestAudioProcessor::createEditor()
 {
-    return new BambooForestAudioProcessorEditor (*this);
+    return new BambooForestAudioProcessorEditor (*this, _parameters);
 }
 
 //==============================================================================
@@ -209,12 +238,20 @@ void BambooForestAudioProcessor::getStateInformation (juce::MemoryBlock& destDat
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+    auto state = _parameters.copyState();
+    std::unique_ptr<juce::XmlElement> xml (state.createXml());
+    copyXmlToBinary (*xml, destData);
 }
 
 void BambooForestAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+    std::unique_ptr<juce::XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+    
+    if (xmlState.get() != nullptr)
+        if (xmlState->hasTagName (_parameters.state.getType()))
+            _parameters.replaceState (juce::ValueTree::fromXml (*xmlState));
 }
 
 //==============================================================================
