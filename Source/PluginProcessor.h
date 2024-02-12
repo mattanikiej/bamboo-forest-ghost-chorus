@@ -54,6 +54,11 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+
+    juce::dsp::DelayLine<float> _delayLine;
+    float _wet = 1.0f;
+    float _feedback = 0.75f;
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BambooForestAudioProcessor)
 };

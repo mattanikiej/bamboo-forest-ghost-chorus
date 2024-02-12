@@ -22,6 +22,9 @@ BambooForestAudioProcessor::BambooForestAudioProcessor()
                        )
 #endif
 {
+
+    _delayLine.setMaximumDelayInSamples(44100);
+    _delayLine.setDelay(0.001f);
 }
 
 BambooForestAudioProcessor::~BambooForestAudioProcessor()
@@ -95,6 +98,13 @@ void BambooForestAudioProcessor::prepareToPlay (double sampleRate, int samplesPe
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    juce::dsp::ProcessSpec spec;
+    spec.sampleRate = sampleRate;
+    spec.maximumBlockSize = samplesPerBlock;
+    spec.numChannels = getNumInputChannels();
+
+    _delayLine.reset();
+    _delayLine.prepare(spec);
 }
 
 void BambooForestAudioProcessor::releaseResources()
@@ -154,8 +164,23 @@ void BambooForestAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     {
         auto* channelData = buffer.getWritePointer (channel);
 
-        // ..do something to the data...
+        auto delayTime = _delayLine.getDelay();
+
+        for (size_t sample = 0; sample < buffer.getNumSamples(); ++sample)
+        {
+            auto delayedSample = _delayLine.popSample(channel, delayTime);                                 
+            auto inputSample = channelData[sample];                        
+
+            auto dlineInputSample = std::tanh(inputSample + _feedback * delayedSample);
+
+            _delayLine.pushSample(channel, dlineInputSample);
+
+            auto outputSample = inputSample + _wet * delayedSample;           
+
+            channelData[sample] = outputSample;                                                   
+        }
     }
+
 }
 
 //==============================================================================
