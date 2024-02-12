@@ -55,9 +55,16 @@ public:
 
 private:
 
+    // delay
     juce::dsp::DelayLine<float> _delayLine;
     float _wet = 1.0f;
     float _feedback = 0.75f;
+    juce::dsp::IIR::Filter<float> _filter;
+    std::array<juce::dsp::IIR::Filter<float>, 2> _filters;
+
+    // chorus
+
+    // ghost
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BambooForestAudioProcessor)
