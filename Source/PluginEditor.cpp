@@ -25,6 +25,7 @@ BambooForestAudioProcessorEditor::BambooForestAudioProcessorEditor (BambooForest
     _wetSlider.setTextBoxStyle (juce::Slider::NoTextBox, false, 90, 0);
     _wetSlider.setPopupDisplayEnabled (true, false, this);
     _wetSlider.setTextValueSuffix (" - Wet");
+    _wetSlider.addListener(this);
     _wetAttachment.reset (new SliderAttachment (_valueTreeState, "wet", _wetSlider));
     
     _feedbackLabel.setText ("Feedback", juce::dontSendNotification);
@@ -35,6 +36,7 @@ BambooForestAudioProcessorEditor::BambooForestAudioProcessorEditor (BambooForest
     _feedbackSlider.setTextBoxStyle (juce::Slider::NoTextBox, false, 90, 0);
     _feedbackSlider.setPopupDisplayEnabled (true, false, this);
     _feedbackSlider.setTextValueSuffix (" - Feedback");
+    _feedbackSlider.addListener(this);
     _feedbackAttachment.reset (new SliderAttachment (_valueTreeState, "feedback", _feedbackSlider));
     
     _delayTimeLabel.setText ("Delay Time", juce::dontSendNotification);
@@ -45,6 +47,7 @@ BambooForestAudioProcessorEditor::BambooForestAudioProcessorEditor (BambooForest
     _delayTimeSlider.setTextBoxStyle (juce::Slider::NoTextBox, false, 90, 0);
     _delayTimeSlider.setPopupDisplayEnabled (true, false, this);
     _delayTimeSlider.setTextValueSuffix (" - Delay Time");
+    _delayTimeSlider.addListener(this);
     _delayTimeAttachment.reset (new SliderAttachment (_valueTreeState, "delayTime", _delayTimeSlider));
     
     setSize (700, 400);
@@ -73,4 +76,11 @@ void BambooForestAudioProcessorEditor::resized()
     _wetSlider.setBounds (40, 30, 20, getHeight() - 60);
     _feedbackSlider.setBounds (60, 30, 20, getHeight() - 60);
     _delayTimeSlider.setBounds (80, 30, 20, getHeight() - 60);
+}
+
+void BambooForestAudioProcessorEditor::sliderValueChanged(juce::Slider* slider)
+{
+    audioProcessor.setWet(_wetSlider.getValue());
+    audioProcessor.setFeedback(_feedbackSlider.getValue());
+    audioProcessor.setDelayInSamples(_delayTimeSlider.getValue());
 }

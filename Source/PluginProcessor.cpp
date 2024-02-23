@@ -27,30 +27,31 @@ BambooForestAudioProcessor::BambooForestAudioProcessor()
                         std::make_unique<juce::AudioParameterFloat> ("wet",             // parameterID
                                                                      "Wet",             // parameter name
                                                                      0.0f,              // minimum value
-                                                                     1.0f,              // maximum value
-                                                                     0.75f),            // default value
+                                                                     10.0f,              // maximum value
+                                                                     9.0f),            // default value
             
                         std::make_unique<juce::AudioParameterFloat> ("feedback",        // parameterID
                                                                      "Feedback",        // parameter name
                                                                      0.0f,              // minimum value
-                                                                     1.0f,              // maximum value
-                                                                     0.5f),             // default value
+                                                                     10.0f,              // maximum value
+                                                                     7.5f),             // default value
             
-                        std::make_unique<juce::AudioParameterFloat> ("delayTime",       // parameterID
+                        std::make_unique<juce::AudioParameterFloat> ("delayTime",         // parameterID
                                                                      "Delay Time",      // parameter name
                                                                      0.0f,              // minimum value
                                                                      10.0f,             // maximum value
-                                                                     0.7f),             // default value
+                                                                     5.0f),             // default value
                       })
 #endif
         
 {
 
-    _delayLine.setMaximumDelayInSamples(44100);
-    
     _wetParameter = _parameters.getRawParameterValue("wet");
     _feedbackParameter = _parameters.getRawParameterValue("feedback");
     _delayTimeParameter = _parameters.getRawParameterValue("delayTime");
+
+    setWet(*_wetParameter);
+    setFeedback(*_feedbackParameter);
 }
 
 BambooForestAudioProcessor::~BambooForestAudioProcessor()
@@ -131,6 +132,8 @@ void BambooForestAudioProcessor::prepareToPlay (double sampleRate, int samplesPe
 
     _delayLine.reset();
     _delayLine.prepare(spec);
+    _delayLine.setMaximumDelayInSamples(sampleRate * 2);
+    setDelayInSamples(*_delayTimeParameter);
 
     auto filterCoefs = juce::dsp::IIR::Coefficients<float>::makeFirstOrderHighPass(sampleRate, 500);
 
@@ -179,41 +182,25 @@ void BambooForestAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
-
-        float wet = *_wetParameter;
-        float feedback = *_feedbackParameter;
-        float delayTime = *_delayTimeParameter;
         
         auto& filter = _filters[channel];
 
         for (size_t sample = 0; sample < buffer.getNumSamples(); ++sample)
         {
-            auto delayedSample = filter.processSample(_delayLine.popSample(channel, delayTime));                              
+            auto delayedSample = filter.processSample(_delayLine.popSample(channel));                              
             auto inputSample = channelData[sample];                        
 
-            auto dlineInputSample = std::tanh(inputSample + feedback * delayedSample);
+            auto dlineInputSample = std::tanh(inputSample + _feedback * delayedSample);
 
             _delayLine.pushSample(channel, dlineInputSample);
 
-            auto outputSample = inputSample + wet * delayedSample;
+            auto outputSample = inputSample + _wet * delayedSample;
 
             channelData[sample] = outputSample;                                                   
         }
@@ -252,6 +239,10 @@ void BambooForestAudioProcessor::setStateInformation (const void* data, int size
     if (xmlState.get() != nullptr)
         if (xmlState->hasTagName (_parameters.state.getType()))
             _parameters.replaceState (juce::ValueTree::fromXml (*xmlState));
+
+    setWet(*_wetParameter);
+    setFeedback(*_feedbackParameter);
+    setDelayInSamples(*_delayTimeParameter);
 }
 
 //==============================================================================
@@ -259,4 +250,21 @@ void BambooForestAudioProcessor::setStateInformation (const void* data, int size
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new BambooForestAudioProcessor();
+}
+
+void BambooForestAudioProcessor::setWet(float newWet)
+{
+    _wet = juce::jmap(newWet, 0.0f, 10.0f, 0.0f, 1.0f);
+}
+
+void BambooForestAudioProcessor::setFeedback(float newFeedback)
+{
+    _feedback = juce::jmap(newFeedback, 0.0f, 10.0f, 0.0f, 1.0f);
+}
+
+void BambooForestAudioProcessor::setDelayInSamples(float newDelay)
+{   
+    float maxDelay = _delayLine.getMaximumDelayInSamples();
+    _delayTime = juce::jmap(newDelay, 0.0f, 10.0f, 0.0f, maxDelay);
+    _delayLine.setDelay(_delayTime);
 }

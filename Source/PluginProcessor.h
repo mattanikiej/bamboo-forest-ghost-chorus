@@ -53,6 +53,10 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    void setWet(float newWet);
+    void setFeedback(float newFeedback);
+    void setDelayInSamples(float newDelay);
+
 private:
     
     juce::AudioProcessorValueTreeState _parameters;
@@ -61,6 +65,10 @@ private:
     std::atomic<float>* _wetParameter = nullptr;
     std::atomic<float>* _feedbackParameter  = nullptr;
     std::atomic<float>* _delayTimeParameter  = nullptr;
+
+    float _wet;
+    float _feedback;
+    float _delayTime;
     
     juce::dsp::DelayLine<float> _delayLine;
     juce::dsp::IIR::Filter<float> _filter;
