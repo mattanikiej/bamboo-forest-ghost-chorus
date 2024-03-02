@@ -53,15 +53,17 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    void setWet(float newWet);
-    void setFeedback(float newFeedback);
+    void setWet(float newWet, float newWetV1, float newWetV2);
+    void setFeedback(float newFeedback, float newFeedbackV1, float newFeedbackV2);
     void setDelayInSamples(float newDelay);
+    void setFrequency(float fqV1, float fqV2);
 
 private:
     
     juce::AudioProcessorValueTreeState _parameters;
+    float _sampleRate = 0.0f;
     
-    // delay
+    // DELAY
     std::atomic<float>* _wetParameter = nullptr;
     std::atomic<float>* _feedbackParameter  = nullptr;
     std::atomic<float>* _delayTimeParameter  = nullptr;
@@ -74,9 +76,31 @@ private:
     juce::dsp::IIR::Filter<float> _filter;
     std::array<juce::dsp::IIR::Filter<float>, 2> _filters;
 
-    // chorus
+    // CHORUS
+    std::atomic<float>* _wetV1Parameter = nullptr;
+    std::atomic<float>* _feedbackV1Parameter = nullptr;
+    std::atomic<float>* _fqV1Parameter = nullptr;
 
-    // ghost
+    float _wetV1;
+    float _feedbackV1;
+
+    juce::dsp::DelayLine<float> _delayLineV1;
+    juce::dsp::IIR::Filter<float> _filterV1;
+    std::array<juce::dsp::IIR::Filter<float>, 2> _filtersV1;
+
+    std::atomic<float>* _wetV2Parameter = nullptr;
+    std::atomic<float>* _feedbackV2Parameter = nullptr;
+    std::atomic<float>* _fqV2Parameter = nullptr;
+
+    float _wetV2;
+    float _feedbackV2;
+
+    juce::dsp::DelayLine<float> _delayLineV2;
+    juce::dsp::IIR::Filter<float> _filterV2;
+    std::array<juce::dsp::IIR::Filter<float>, 2> _filtersV2;
+
+
+    // GHOST
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BambooForestAudioProcessor)

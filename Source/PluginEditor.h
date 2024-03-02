@@ -34,7 +34,7 @@ private:
     BambooForestAudioProcessor& audioProcessor;
     juce::AudioProcessorValueTreeState& _valueTreeState;
      
-    // Delay sliders
+    // DELAY
     juce::Label _wetLabel;
     juce::Slider _wetSlider;
     std::unique_ptr<SliderAttachment> _wetAttachment;
@@ -46,6 +46,33 @@ private:
     juce::Label _delayTimeLabel;
     juce::Slider _delayTimeSlider;
     std::unique_ptr<SliderAttachment> _delayTimeAttachment;
+
+    // CHORUS
+    juce::Label _wetV1Label;
+    juce::Slider _wetV1Slider;
+    std::unique_ptr<SliderAttachment> _wetV1Attachment;
+
+    juce::Label _feedbackV1Label;
+    juce::Slider _feedbackV1Slider;
+    std::unique_ptr<SliderAttachment> _feedbackV1Attachment;
+
+    juce::Label _frequencyV1Label;
+    juce::Slider _frequencyV1Slider;
+    std::unique_ptr<SliderAttachment> _frequencyV1Attachment;
+
+    juce::Label _wetV2Label;
+    juce::Slider _wetV2Slider;
+    std::unique_ptr<SliderAttachment> _wetV2Attachment;
+
+    juce::Label _feedbackV2Label;
+    juce::Slider _feedbackV2Slider;
+    std::unique_ptr<SliderAttachment> _feedbackV2Attachment;
+
+    juce::Label _frequencyV2Label;
+    juce::Slider _frequencyV2Slider;
+    std::unique_ptr<SliderAttachment> _frequencyV2Attachment;
+
+    juce::Image _background = juce::ImageCache::getFromMemory(BinaryData::background_png, BinaryData::background_pngSize);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BambooForestAudioProcessorEditor)
 };
