@@ -44,42 +44,55 @@ BambooForestAudioProcessor::BambooForestAudioProcessor()
                         
                         // CHORUS PARAMS
                         // Voice 1
-                        std::make_unique<juce::AudioParameterFloat>("wetV1",                   // parameterID
-                                                                     "Wet Voice 1",            // parameter name
-                                                                     0.0f,                     // minimum value
-                                                                     10.0f,                    // maximum value
-                                                                     9.0f),                    // default value
+                        std::make_unique<juce::AudioParameterFloat>("wetV1",                  // parameterID
+                                                                    "Wet Voice 1",            // parameter name
+                                                                    0.0f,                     // minimum value
+                                                                    10.0f,                    // maximum value
+                                                                    9.0f),                    // default value
 
-                        std::make_unique<juce::AudioParameterFloat>("feedbackV1",              // parameterID
-                                                                     "Feedback Voice 1",       // parameter name
-                                                                     0.0f,                     // minimum value
-                                                                     10.0f,                    // maximum value
-                                                                     7.5f),                    // default value
+                        std::make_unique<juce::AudioParameterFloat>("feedbackV1",             // parameterID
+                                                                    "Feedback Voice 1",       // parameter name
+                                                                    0.0f,                     // minimum value
+                                                                    10.0f,                    // maximum value
+                                                                    7.5f),                    // default value
 
-                        std::make_unique<juce::AudioParameterFloat>("frequencyV1",             // parameterID
-                                                                     "Frequency Voice 1",      // parameter name
-                                                                     0.1f,                     // minimum value
-                                                                     10.0f,                    // maximum value
-                                                                     5.0f),                    // default value
+                        std::make_unique<juce::AudioParameterFloat>("frequencyV1",            // parameterID
+                                                                    "Frequency Voice 1",      // parameter name
+                                                                    0.1f,                     // minimum value
+                                                                    10.0f,                    // maximum value
+                                                                    5.0f),                    // default value
                         
                         // Voice 2
-                        std::make_unique<juce::AudioParameterFloat>("wetV2",                   // parameterID
-                                                                     "Wet Voice 2",            // parameter name
-                                                                     0.0f,                     // minimum value
-                                                                     10.0f,                    // maximum value
-                                                                     9.0f),                    // default value
+                        std::make_unique<juce::AudioParameterFloat>("wetV2",                  // parameterID
+                                                                    "Wet Voice 2",            // parameter name
+                                                                    0.0f,                     // minimum value
+                                                                    10.0f,                    // maximum value
+                                                                    9.0f),                    // default value
 
-                        std::make_unique<juce::AudioParameterFloat>("feedbackV2",              // parameterID
-                                                                     "Feedback Voice 2",       // parameter name
-                                                                     0.1f,                     // minimum value
-                                                                     10.0f,                    // maximum value
-                                                                     7.5f),                    // default value
+                        std::make_unique<juce::AudioParameterFloat>("feedbackV2",             // parameterID
+                                                                    "Feedback Voice 2",       // parameter name
+                                                                    0.1f,                     // minimum value
+                                                                    10.0f,                    // maximum value
+                                                                    7.5f),                    // default value
 
-                        std::make_unique<juce::AudioParameterFloat>("frequencyV2",             // parameterID
-                                                                     "Frequency Voice 2",      // parameter name
-                                                                     0.0f,                     // minimum value
-                                                                     10.0f,                    // maximum value
-                                                                     5.0f),                    // default value
+                        std::make_unique<juce::AudioParameterFloat>("frequencyV2",            // parameterID
+                                                                    "Frequency Voice 2",      // parameter name
+                                                                    0.0f,                     // minimum value
+                                                                    10.0f,                    // maximum value
+                                                                    5.0f),                    // default value
+
+                        // GHOST
+                        std::make_unique<juce::AudioParameterFloat>("ghost",                  // parameterID
+                                                                    "Ghost",                  // parameter name
+                                                                    0.0f,                     // minimum value
+                                                                    10.0f,                    // maximum value
+                                                                    0.0f),                    // default value
+
+                        std::make_unique<juce::AudioParameterFloat>("dry",                    // parameterID
+                                                                    "Dry",                    // parameter name
+                                                                    0.0f,                     // minimum value
+                                                                    10.0f,                    // maximum value
+                                                                    10.0f),                   // default value
                       })
 #endif
         
@@ -96,6 +109,9 @@ BambooForestAudioProcessor::BambooForestAudioProcessor()
     _wetV2Parameter = _parameters.getRawParameterValue("wetV2");
     _feedbackV2Parameter = _parameters.getRawParameterValue("feedbackV2");
     _fqV2Parameter = _parameters.getRawParameterValue("frequencyV2");
+
+    _ghostParameter = _parameters.getRawParameterValue("ghost");
+    _dryParameter = _parameters.getRawParameterValue("dry");
 
     setWet(*_wetParameter, *_wetV1Parameter, *_wetV2Parameter);
     setFeedback(*_feedbackParameter, *_feedbackV1Parameter, *_feedbackV2Parameter);
@@ -271,6 +287,9 @@ void BambooForestAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         auto& filterV1 = _filtersV1[channel];
         auto& filterV2 = _filtersV2[channel];
 
+        auto dry = *_dryParameter / 10.0f;
+        auto ghost = 1.0f - (*_ghostParameter / 10.0f);
+
         for (size_t sample = 0; sample < buffer.getNumSamples(); ++sample)
         {
             auto inputSample = channelData[sample];
@@ -290,8 +309,10 @@ void BambooForestAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
             auto delayedSample = filter.processSample(_delayLine.popSample(channel));                                               
             auto dlineInputSample = std::tanh(chorusSample + _feedback * delayedSample);
             _delayLine.pushSample(channel, dlineInputSample);
-            
-            delayedSample *= _wet;
+
+            // GHOST
+            // dry amount of input + ghost amount of chorus + wet amount of delay
+            auto out = dry * inputSample + ghost * chorusSample + _wet * delayedSample;
 
             auto outputSample = inputSample + delayedSample;
 
@@ -336,6 +357,7 @@ void BambooForestAudioProcessor::setStateInformation (const void* data, int size
     setWet(*_wetParameter, *_wetV1Parameter, *_wetV2Parameter);
     setFeedback(*_feedbackParameter, *_feedbackV1Parameter, *_feedbackV2Parameter);
     setDelayInSamples(*_delayTimeParameter);
+    setFrequency(*_fqV1Parameter, *_fqV2Parameter);
 }
 
 //==============================================================================

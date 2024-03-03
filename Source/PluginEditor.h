@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "BambooForestLAF.h"
 
 typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
 
@@ -33,6 +34,7 @@ private:
     // access the processor object that created it.
     BambooForestAudioProcessor& audioProcessor;
     juce::AudioProcessorValueTreeState& _valueTreeState;
+    BambooForestLAF _laf;
      
     // DELAY
     juce::Label _wetLabel;
@@ -72,7 +74,15 @@ private:
     juce::Slider _frequencyV2Slider;
     std::unique_ptr<SliderAttachment> _frequencyV2Attachment;
 
-    juce::Image _background = juce::ImageCache::getFromMemory(BinaryData::background_png, BinaryData::background_pngSize);
+    juce::Label _ghostLabel;
+    juce::Slider _ghostSlider;
+    std::unique_ptr<SliderAttachment> _ghostAttachment;
+
+    juce::Label _dryLabel;
+    juce::Slider _drySlider;
+    std::unique_ptr<SliderAttachment> _dryAttachment;
+
+    juce::Image _background = juce::ImageCache::getFromMemory(BinaryData::background2_png, BinaryData::background2_pngSize);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BambooForestAudioProcessorEditor)
 };

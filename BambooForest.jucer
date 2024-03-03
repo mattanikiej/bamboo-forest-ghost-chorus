@@ -8,6 +8,10 @@
               companyName="Cool Panda Software">
   <MAINGROUP id="Z0ygPX" name="BambooForest">
     <GROUP id="{D5502615-8632-A1F5-275A-EDE43B72840B}" name="Source">
+      <FILE id="wy5W6D" name="BambooForestLAF.cpp" compile="1" resource="0"
+            file="Source/BambooForestLAF.cpp"/>
+      <FILE id="Q5V7HZ" name="BambooForestLAF.h" compile="0" resource="0"
+            file="Source/BambooForestLAF.h"/>
       <FILE id="lmCQIF" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="Twy6uy" name="PluginProcessor.h" compile="0" resource="0"
@@ -16,7 +20,9 @@
             file="Source/PluginEditor.cpp"/>
       <FILE id="xSm6s1" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
-    <FILE id="TBHsPO" name="background.png" compile="0" resource="1" file="Assets/background.png"/>
+    <FILE id="z4jHm3" name="AssassinNinja-7BYyR.ttf" compile="0" resource="1"
+          file="../../a-assassin-ninja-font/AssassinNinja-7BYyR.ttf"/>
+    <FILE id="DNbzyf" name="background2.png" compile="0" resource="1" file="Assets/background2.png"/>
   </MAINGROUP>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>

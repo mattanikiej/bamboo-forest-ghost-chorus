@@ -101,6 +101,8 @@ private:
 
 
     // GHOST
+    std::atomic<float>* _ghostParameter = nullptr;
+    std::atomic<float>* _dryParameter = nullptr;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BambooForestAudioProcessor)

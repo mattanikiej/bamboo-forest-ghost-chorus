@@ -8,11 +8,14 @@
 
 namespace BinaryData
 {
-    extern const char*   background_png;
-    const int            background_pngSize = 158007;
+    extern const char*   AssassinNinja7BYyR_ttf;
+    const int            AssassinNinja7BYyR_ttfSize = 29264;
+
+    extern const char*   background2_png;
+    const int            background2_pngSize = 69112;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 1;
+    const int namedResourceListSize = 2;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];
