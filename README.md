@@ -1,4 +1,4 @@
-# Bamboo Forest Ghost CHorus and Delay VST3/AU Plugin
+# Bamboo Forest Ghost Chorus and Delay VST3/AU Plugin
 Introducing the **Bamboo Forest** from Cool Panda Software
 
 <p>
