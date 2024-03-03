@@ -12,7 +12,7 @@ namespace BinaryData
     const int            AssassinNinja7BYyR_ttfSize = 29264;
 
     extern const char*   background2_png;
-    const int            background2_pngSize = 69112;
+    const int            background2_pngSize = 94923;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
     const int namedResourceListSize = 2;

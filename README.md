@@ -5,14 +5,14 @@ Introducing the **Bamboo Forest** from Cool Panda Software
     <img alt="Bamboo Forest Interface" src="/Assets/interface.png" height="400" aspect-ratio="7:4">
 </p>
 
-For a twinlking delay and a spacious chorus, the Bamboo forest cangive aw surreal effect to your audio. Increasing Ghost decreases the initial chorus effect, while keeping it intact in the delay signal. This creates an cool vibe as if a chorus of ghosts is helping you along.
+For a twinlking delay and a spacious chorus, the Bamboo forest cangive aw surreal effect to your audio. Increasing Ghost decreases the initial chorus effect, while keeping it intact in the delay signal. This creates a cool vibe as if a chorus of ghosts is helping you along.
 
 Experience the short demo below:
 
 https://www.youtube.com/watch?v=yq-T4vw3dbU
 
 ## Parameters
-The parameters are layed out according to their respective effect
+The parameters are laid out according to their respective effect
 * Delay Params 🔄
     * Wet - amount of delayed signal to add
     * Feedback - amount of signal to feed back to delay
@@ -20,7 +20,7 @@ The parameters are layed out according to their respective effect
 
 * Chorus Params (for each voice) 🐼
     * Wet - amount of voice to add
-    * Feedback - amount of vocie signal to feed back to delay
+    * Feedback - amount of voice signal to feed back to delay
     * Rate - frequency of phased signal
 
 * Ghost Params 👻
