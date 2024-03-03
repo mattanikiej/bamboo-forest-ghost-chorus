@@ -2,7 +2,7 @@
 Introducing the **Bamboo Forest** from Cool Panda Software
 
 <p>
-    <img alt="Bamboo Forest Interface" src="/Assets/interface.png" height="400" aspect-ratio="7:4">
+    <img alt="Bamboo Forest Interface" src="/Assets/interface.png" max-height="400" aspect-ratio="7:4">
 </p>
 
 For a twinlking delay and a spacious chorus, the Bamboo forest cangive aw surreal effect to your audio. Increasing Ghost decreases the initial chorus effect, while keeping it intact in the delay signal. This creates a cool vibe as if a chorus of ghosts is helping you along.
