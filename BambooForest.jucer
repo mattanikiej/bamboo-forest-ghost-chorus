@@ -20,8 +20,8 @@
             file="Source/PluginEditor.cpp"/>
       <FILE id="xSm6s1" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
-    <FILE id="z4jHm3" name="AssassinNinja-7BYyR.ttf" compile="0" resource="1"
-          file="../../a-assassin-ninja-font/AssassinNinja-7BYyR.ttf"/>
+    <FILE id="dbNwr3" name="AssassinNinja-7BYyR.ttf" compile="0" resource="1"
+          file="Assets/AssassinNinja-7BYyR.ttf"/>
     <FILE id="DNbzyf" name="background2.png" compile="0" resource="1" file="Assets/background2.png"/>
   </MAINGROUP>
   <MODULES>
