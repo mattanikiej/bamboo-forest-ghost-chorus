@@ -28,7 +28,7 @@ The parameters are laid out according to their respective effect
     * Dry - amount of input signal to add to output
 
 ## What is Ghost?
-Ghost is a very cool effect that allows the dry signal to go through unchanged, and then adds the effects only onto the delayed signal. What this does with a chorus is it makes the delay very twinly and sounds great with single notes and chords alike. It's an interesting effect that has a ton of potential uses! The Ghost parameter essentially works as a wet mixer for the chorus effect as a whole on the input signal.
+Ghost is a very cool effect that allows the dry signal to go through unchanged, and then adds the effects only onto the delayed signal. What this does with a chorus, is make the delay very twinkly and sounds great with single notes and chords alike. It's an interesting effect that has a ton of potential uses! The Ghost parameter essentially works as a wet mixer for the chorus effect as a whole on the input signal.
 
 ## Files Supported
 Currently **Bamboo Forest** is only available as a **VST3** or **AU** plugin, which is supported by most types of DAWs. It also works as a standalone app without the need for a DAW. It has not been tested or compiled as an AAX file for Pro Tools, but it should build and work if you have the license and SDK.
