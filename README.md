@@ -9,7 +9,7 @@ For a twinkling delay and a spacious chorus, the Bamboo Forest can give a surrea
 
 Experience the short demo below:
 
-https://www.youtube.com/watch?v=yq-T4vw3dbU
+[https://www.youtube.com/watch?v=yq-T4vw3dbU](https://www.youtube.com/watch?v=C1OoC6Dh8qE)
 
 ## Parameters
 The parameters are laid out according to their respective effect
